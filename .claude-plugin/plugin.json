@@ -1,0 +1,23 @@
+{
+  "name": "flyen-dicom-viewer",
+  "displayName": "Flyen DICOM Viewer",
+  "version": "1.2.0",
+  "description": "Let Claude look at and control the Flyen DICOM Viewer open on your Windows computer: slices, windows, MPR and 3D, density and distance measurements, arrows and AI organ segmentation. Viewing support only, not for diagnosis.",
+  "author": {
+    "name": "Flyen",
+    "email": "stasbojonca1996@gmail.com",
+    "url": "https://flyen.web.app"
+  },
+  "homepage": "https://flyen.web.app/claude.html",
+  "repository": "https://github.com/stasbojonca1996-pixel/flyen-claude-plugin",
+  "license": "MIT",
+  "keywords": [
+    "dicom",
+    "medical-imaging",
+    "ct",
+    "mri",
+    "radiology",
+    "viewer",
+    "segmentation"
+  ]
+}

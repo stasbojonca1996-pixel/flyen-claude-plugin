@@ -1,0 +1,17 @@
+{
+  "name": "flyen",
+  "owner": {
+    "name": "Flyen",
+    "email": "stasbojonca1996@gmail.com"
+  },
+  "metadata": {
+    "description": "Flyen DICOM Viewer for Claude: look at and control the study open in Flyen."
+  },
+  "plugins": [
+    {
+      "name": "flyen-dicom-viewer",
+      "source": "./",
+      "description": "Let Claude look at and control the Flyen DICOM Viewer open on your Windows computer."
+    }
+  ]
+}
