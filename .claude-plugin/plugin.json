@@ -1,7 +1,7 @@
 {
   "name": "flyen-dicom-viewer",
   "displayName": "Flyen DICOM Viewer",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Let Claude look at and control the Flyen DICOM Viewer open on your Windows computer: slices, windows, MPR and 3D, density and distance measurements, arrows and AI organ segmentation. Viewing support only, not for diagnosis.",
   "author": {
     "name": "Stanislav Bojonca",

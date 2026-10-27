@@ -19,7 +19,7 @@ const path = require('path');
 const http = require('http');
 const readline = require('readline');
 
-const SERVER_INFO = { name: 'flyen-dicom-viewer', version: '1.2.0' };
+const SERVER_INFO = { name: 'flyen-dicom-viewer', version: '1.3.0' };
 const PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 const STATE_FILE = path.join(
   process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local'),
@@ -28,6 +28,17 @@ const STATE_FILE = path.join(
 const NOT_DIAG = ' Results are for viewing support only — not for diagnosis.';
 
 const TOOLS = [
+  {
+    name: 'segmentation_sets',
+    description: 'What AI segmentation can find on the current series: the main '
+      + 'set (117 structures on CT, 50 on MR) and the detailed sets (lungs: '
+      + 'arteries, veins, airways, nodules, effusion; liver segments, vessels, '
+      + 'lesions; kidney cysts; brain haemorrhage; teeth; head and neck) — each '
+      + 'with its structure names, how many are found already, whether it is '
+      + 'experimental, the model download still needed (MB) and the expected '
+      + 'minutes on this computer. Call before segmentation_run.' + NOT_DIAG,
+    inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+  },
   {
     name: 'get_state',
     description: 'What Flyen shows now: view mode (2d / mpr / 3d), the series of '
@@ -212,8 +223,9 @@ const TOOLS = [
   },
   {
     name: 'segmentation_stats',
-    description: 'Volume (ml) and density (mean / SD, HU for CT) of AI-segmented '
-      + 'structures of the current series — `structures` names, or all found.'
+    description: 'Volume (ml) and density (mean / SD; HU on CT, the scanner\'s '
+      + 'signal values on MR) of AI-segmented structures of the current series — '
+      + '`structures` names, or all found.'
       + NOT_DIAG,
     inputSchema: {
       type: 'object', additionalProperties: false,
@@ -239,7 +251,8 @@ const TOOLS = [
     name: 'segmentation_show',
     description: 'Control the AI segmentation layer (2D, MPR and 3D together): '
       + '`show` / `hide` lists of structure names (e.g. "pancreas", "liver", '
-      + '"vertebrae_L1", "lung" matches all lobes), `only`: true = show just '
+      + '"vertebrae_L1", "liver_segment_4", "lung_arteries"; "lung" matches all '
+      + 'lobes; names from get_state / segmentation_sets), `only`: true = show just '
       + 'the listed ones with everything else hidden, `all`: true = show every '
       + 'found structure, `layer`: false/true = hide / show the whole layer. '
       + 'Needs the AI segmentation add-on on in the tab.' + NOT_DIAG,
@@ -257,9 +270,13 @@ const TOOLS = [
   {
     name: 'segmentation_run',
     description: 'Start AI segmentation (TotalSegmentator, on this computer) of '
-      + 'the current CT series for the listed `structures` (empty = all 117). '
-      + 'Runs in the background for minutes; poll get_state → '
-      + 'ai_segmentation.running. `fast`: quicker, coarser model.' + NOT_DIAG,
+      + 'the current CT or MR series for the listed `structures` — names from '
+      + 'segmentation_sets (empty = the whole main set: 117 on CT, 50 on MR). A '
+      + 'structure of a detailed set (lung vessels, liver segments, teeth…) runs '
+      + 'its whole set; structures of several sets run one after another. Runs '
+      + 'in the background for minutes (a detailed set up to ~45 min on the '
+      + 'CPU; the first use of a set downloads its model); poll get_state → '
+      + 'ai_segmentation.running. `fast`: quicker, coarser main model.' + NOT_DIAG,
     inputSchema: {
       type: 'object', additionalProperties: false,
       properties: {
@@ -275,6 +292,7 @@ const TOOLS = [
 // Flyen shows on screen, never the study files. Nothing leaves this computer
 // except through Claude itself (openWorldHint false).
 const HINTS = {
+  segmentation_sets: ['List segmentation sets', true],
   get_state: ['Get viewer state', true],
   get_view_image: ['Get view image', true],
   select_series: ['Select series', false],
